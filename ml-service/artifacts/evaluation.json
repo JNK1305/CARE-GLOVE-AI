@@ -1,0 +1,87 @@
+{
+  "model": "ExtraTreesClassifier",
+  "model_version": "synthetic-scenario-v1",
+  "seed": 20261013,
+  "feature_order": [
+    "heart_rate",
+    "gsr",
+    "temperature"
+  ],
+  "target_labels": [
+    "NORMAL",
+    "WARNING",
+    "CRITICAL"
+  ],
+  "split": {
+    "method": "GroupShuffleSplit by simulation run, before overlapping windows are generated",
+    "train_runs": 144,
+    "test_runs": 36,
+    "train_windows": 8496,
+    "test_windows": 2124
+  },
+  "held_out": {
+    "accuracy": 0.7038606403013182,
+    "macro_f1": 0.5416876045092528,
+    "confusion_matrix_labels": [
+      "NORMAL",
+      "WARNING",
+      "CRITICAL"
+    ],
+    "confusion_matrix": [
+      [
+        1248,
+        248,
+        72
+      ],
+      [
+        80,
+        133,
+        34
+      ],
+      [
+        66,
+        129,
+        114
+      ]
+    ],
+    "classification_report": {
+      "NORMAL": {
+        "precision": 0.8952654232424677,
+        "recall": 0.7959183673469388,
+        "f1-score": 0.8426738690074275,
+        "support": 1568.0
+      },
+      "WARNING": {
+        "precision": 0.2607843137254902,
+        "recall": 0.5384615384615384,
+        "f1-score": 0.3513870541611625,
+        "support": 247.0
+      },
+      "CRITICAL": {
+        "precision": 0.5181818181818182,
+        "recall": 0.36893203883495146,
+        "f1-score": 0.43100189035916825,
+        "support": 309.0
+      },
+      "accuracy": 0.7038606403013182,
+      "macro avg": {
+        "precision": 0.5580771850499254,
+        "recall": 0.5677706482144763,
+        "f1-score": 0.5416876045092528,
+        "support": 2124.0
+      },
+      "weighted avg": {
+        "precision": 0.7666233949870845,
+        "recall": 0.7038606403013182,
+        "f1-score": 0.7256519835698853,
+        "support": 2124.0
+      }
+    }
+  },
+  "candidate_macro_f1": {
+    "StandardScaler + LogisticRegression": 0.4799490646461013,
+    "RandomForestClassifier": 0.5300348720794839,
+    "ExtraTreesClassifier": 0.5416876045092528
+  },
+  "limitations": "Evaluation uses generated simulation scenarios only; it does not estimate performance on real people, clinical outcomes, or hardware."
+}

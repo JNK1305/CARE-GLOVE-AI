@@ -1,0 +1,1 @@
+ALTER TABLE patients MODIFY COLUMN monitoring_status VARCHAR(32) NOT NULL DEFAULT 'READY';

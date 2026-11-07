@@ -1,0 +1,70 @@
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+
+spring:
+  application:
+    name: care-glove-backend
+  datasource:
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3307}/${DB_NAME:careglove_db}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+
+careglove:
+  app-env: ${APP_ENV:local}
+  jwt:
+    secret: ${JWT_SECRET:care-glove-local-default-jwt-secret-at-least-32-bytes-long}
+    ttl-minutes: ${JWT_TTL_MINUTES:60}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  ml:
+    base-url: ${ML_SERVICE_URL:http://localhost:8001}
+    connect-timeout: ${ML_CONNECT_TIMEOUT_MS:2000}
+    read-timeout: ${ML_READ_TIMEOUT_MS:5000}
+    persistence-windows: ${ALERT_PERSISTENCE_WINDOWS:3}
+    recovery-windows: ${ALERT_RECOVERY_WINDOWS:3}
+    cooldown-seconds: ${ALERT_COOLDOWN_SECONDS:900}
+  monitoring:
+    interval-seconds: ${MONITORING_INTERVAL_SECONDS:15}
+    interval-ms: ${MONITORING_INTERVAL_MS:15000}
+    stale-after-seconds: ${MONITORING_STALE_AFTER_SECONDS:45}
+  firebase:
+    enabled: ${CAREGLOVE_FIREBASE_ENABLED:true}
+    database-url: ${CAREGLOVE_FIREBASE_URL:https://worksafe-ai-63fc8-default-rtdb.firebaseio.com/}
+    sensor-data-path: ${CAREGLOVE_FIREBASE_SENSOR_DATA_PATH:/sensorData}
+    sensor-history-path: ${CAREGLOVE_FIREBASE_SENSOR_HISTORY_PATH:/sensorHistory}
+    poll-interval-seconds: ${CAREGLOVE_FIREBASE_POLL_INTERVAL_SECONDS:15}
+    auth-token: ${CAREGLOVE_FIREBASE_AUTH_TOKEN:}
+    default-device-id: ${CAREGLOVE_FIREBASE_DEFAULT_DEVICE:GLV-ICU-001}
+    default-patient-id: ${CAREGLOVE_FIREBASE_DEFAULT_PATIENT:CG-B2CC11AC158A}
+    device-patient-mapping: ${CAREGLOVE_FIREBASE_DEVICE_PATIENT_MAPPING:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

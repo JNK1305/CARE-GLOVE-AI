@@ -1,0 +1,169 @@
+.sidebar-scrim {
+  display: none;
+}
+
+.history-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.history-chart {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fbfcf8;
+}
+
+.history-chart-heading,
+.history-chart-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.history-chart-heading {
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.history-chart-heading div {
+  display: grid;
+  gap: 4px;
+}
+
+.history-chart-heading span {
+  color: var(--sage-dark);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.history-chart-heading small,
+.history-chart-source,
+.history-chart-axis {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.history-chart svg {
+  display: block;
+  width: 100%;
+  height: 95px;
+  overflow: visible;
+}
+
+.history-chart svg line {
+  stroke: #dfe5df;
+  stroke-dasharray: 2 2;
+  stroke-width: 0.5;
+}
+
+.history-chart svg polyline {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+}
+
+.history-chart-axis {
+  margin-top: 4px;
+}
+
+.history-chart-source {
+  display: block;
+  margin-top: 8px;
+}
+
+.monitoring-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.monitoring-alert-critical {
+  color: var(--coral);
+  background: #fff1ef;
+}
+
+.monitoring-alert-warning {
+  color: var(--amber);
+  background: #fff8e8;
+}
+
+.monitoring-alert div {
+  display: grid;
+  gap: 4px;
+}
+
+.monitoring-alert span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.notification-list .notification-unread {
+  background: #f7faf6;
+  border-left: 3px solid var(--teal);
+}
+
+.notification-list .notification-read {
+  opacity: 0.75;
+}
+
+.clinical-record-button {
+  width: 100%;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.clinical-record-button b {
+  font-size: 13px;
+}
+
+.table-scroll table td span {
+  display: block;
+  margin-top: 3px;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.permission-toggle {
+  display: flex !important;
+  align-items: center;
+  gap: 9px !important;
+}
+
+.permission-toggle input {
+  width: auto !important;
+}
+
+@media (max-width: 760px) {
+  .sidebar-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 14;
+    border: 0;
+    background: #17221e70;
+  }
+
+  .sidebar {
+    z-index: 15;
+  }
+
+  .history-chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-scroll table {
+    min-width: 720px;
+  }
+}

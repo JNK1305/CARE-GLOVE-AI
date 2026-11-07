@@ -1,0 +1,83 @@
+# Care Glove AI — Project Startup Commands
+
+**Project folder:** `C:\Users\jidny\OneDrive\Desktop\Care Glove Ai`
+
+Run the commands in the order below. Open a **new PowerShell terminal for each service**. Do not close terminals that are already running a service.
+
+## Step 1 — Check MySQL
+**Terminal 1 — Open PowerShell**
+
+```powershell
+Get-Service *mysql*
+```
+
+Confirm the MySQL service is `Running`.
+
+Check the database port:
+
+```powershell
+Test-NetConnection 127.0.0.1 -Port 3307
+```
+
+Confirm `TcpTestSucceeded : True`.
+
+## Step 2 — Start the Spring Boot backend
+**Terminal 2 — Open a NEW PowerShell window**
+
+```powershell
+cd "C:\Users\jidny\OneDrive\Desktop\Care Glove Ai"
+.\backend\.maven\apache-maven-3.9.9\bin\mvn.cmd -f backend/pom.xml spring-boot:run
+```
+
+Wait for the backend to finish starting. Keep this terminal open.
+
+If port `8080` is already in use, the backend may already be running. Check it before starting another instance.
+
+## Step 3 — Start the ML service
+**Terminal 3 — Open a NEW PowerShell window**
+
+```powershell
+cd "C:\Users\jidny\OneDrive\Desktop\Care Glove Ai\ml-service"
+.\.venv\Scripts\uvicorn.exe src.main:app --host 127.0.0.1 --port 8001
+```
+
+Keep this terminal open.
+
+If port `8001` is already in use, check whether the ML service is already running before trying to start it again.
+
+## Step 4 — Start the Next.js frontend
+**Terminal 4 — Open a NEW PowerShell window**
+
+```powershell
+cd "C:\Users\jidny\OneDrive\Desktop\Care Glove Ai"
+pnpm dev
+```
+
+Wait until the terminal displays `Ready` and the local URL, usually `http://localhost:3000`. Keep this terminal open.
+
+## Step 5 — Open the application
+
+Open your browser and visit:
+
+```text
+http://localhost:3000
+```
+
+**Demo login:**
+
+- Email: `admin@careglove.demo`
+- Password: `demo`
+
+## Step 6 — Verify the services
+
+Open these URLs in your browser:
+
+- Frontend: http://localhost:3000
+- Backend health check: http://localhost:8080/actuator/health
+- ML API documentation: http://127.0.0.1:8001/docs
+
+Confirm that the frontend loads, login succeeds, and patient information is visible.
+
+**Important:** If a port is already in use, the corresponding service may already be running. Check it before launching another instance. Do not reset the database or terminate running processes just to restart the project.
+
+**Hardware note:** The dashboard can work even if the glove is not sending fresh readings. If the device shows `STALE`, verify the hardware connection and incoming data separately.
