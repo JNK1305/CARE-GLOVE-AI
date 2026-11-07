@@ -12,14 +12,19 @@ import ai.careglove.user.UserRepository;
 import ai.careglove.vitals.SensorReadingEntity;
 import ai.careglove.vitals.SensorReadingRepository;
 import java.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AdminBootstrap implements ApplicationRunner {
+    private static final Logger log = LoggerFactory.getLogger(AdminBootstrap.class);
+
     private final UserRepository users;
     private final PasswordEncoder passwords;
     private final PatientRepository patients;
@@ -63,14 +68,23 @@ public class AdminBootstrap implements ApplicationRunner {
         if (email == null || email.isBlank() || password == null || password.length() < 16) {
             throw new IllegalStateException("Set both ADMIN_BOOTSTRAP_EMAIL and a 16-character ADMIN_BOOTSTRAP_PASSWORD, or leave both unset.");
         }
-        if (users.findByEmailIgnoreCase(email).isPresent()) return;
-        UserEntity admin = new UserEntity();
-        admin.setId("admin-" + java.util.UUID.randomUUID());
-        admin.setEmail(email.trim().toLowerCase());
-        admin.setName("CARE-GLOVE Administrator");
-        admin.setRole(Role.admin);
-        admin.setPasswordHash(passwords.encode(password));
-        users.save(admin);
+        String cleanEmail = email.trim().toLowerCase();
+        if (users.findByEmailIgnoreCase(cleanEmail).isPresent()) {
+            log.info("Bootstrap admin user '{}' already exists. Skipping admin creation.", cleanEmail);
+            return;
+        }
+        try {
+            UserEntity admin = new UserEntity();
+            admin.setId("admin-" + java.util.UUID.randomUUID());
+            admin.setEmail(cleanEmail);
+            admin.setName("CARE-GLOVE Administrator");
+            admin.setRole(Role.admin);
+            admin.setPasswordHash(passwords.encode(password));
+            users.save(admin);
+            log.info("Bootstrap admin user '{}' successfully created.", cleanEmail);
+        } catch (DataIntegrityViolationException ex) {
+            log.info("Bootstrap admin user '{}' already exists (duplicate key constraint caught). Skipping creation.", cleanEmail);
+        }
     }
 
     private void bootstrapLocalDevData() {

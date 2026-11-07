@@ -114,7 +114,9 @@ public class MlPredictionProcessingService {
                 .orElseGet(() -> startSession(patient, reading));
         AlertEntity alert = null;
         String computedSeverity = resolveSeverity(reading, result);
-        if ("CRITICAL".equals(computedSeverity) || "WARNING".equals(computedSeverity) || result.windowScored()) {
+        if ("DEMO_SENSOR".equalsIgnoreCase(reading.getSource())) {
+            // Demo readings do not trigger alerts or modify monitoring sessions
+        } else if ("CRITICAL".equals(computedSeverity) || "WARNING".equals(computedSeverity) || result.windowScored()) {
             if ("CRITICAL".equals(computedSeverity) || "WARNING".equals(computedSeverity) || "POTENTIAL_ANOMALY".equals(result.state())) {
                 session.setNormalWindowCount(0);
                 if (!session.isActive()) {
@@ -127,7 +129,9 @@ public class MlPredictionProcessingService {
                 session.setDurationSeconds(Math.max(0, result.timestamp().getEpochSecond() - session.getPersistenceStartedAt().getEpochSecond()));
                 String dedupKey = computedSeverity + ":" + patient.getId() + ":" + reading.getDeviceId();
                 var existingActive = alerts.findFirstByDeduplicationKeyAndStatusInOrderByCreatedAtDesc(
-                        dedupKey, List.of("OPEN", "ACKNOWLEDGED"));
+                        dedupKey, List.of("OPEN", "ACKNOWLEDGED"))
+                        .or(() -> alerts.findFirstByPatientIdAndStatusInOrderByCreatedAtDesc(
+                                patient.getId(), List.of("OPEN", "ACKNOWLEDGED")));
                 if (existingActive.isPresent()) {
                     AlertEntity activeAlert = existingActive.get();
                     activeAlert.setValue(reading.getHeartRate() != null ? reading.getHeartRate() : activeAlert.getValue());
@@ -245,13 +249,16 @@ public class MlPredictionProcessingService {
             MlDtos.PredictionResponse result,
             PatientEntity patient,
             UserEntity actor) {
+        if ("DEMO_SENSOR".equalsIgnoreCase(reading.getSource())) return null;
         if (alerts.existsByPredictionId(prediction.getId())) return null;
 
         String severity = resolveSeverity(reading, result);
         String dedupKey = severity + ":" + patient.getId() + ":" + reading.getDeviceId();
 
         var existingActive = alerts.findFirstByDeduplicationKeyAndStatusInOrderByCreatedAtDesc(
-                dedupKey, List.of("OPEN", "ACKNOWLEDGED"));
+                dedupKey, List.of("OPEN", "ACKNOWLEDGED"))
+                .or(() -> alerts.findFirstByPatientIdAndStatusInOrderByCreatedAtDesc(
+                        patient.getId(), List.of("OPEN", "ACKNOWLEDGED")));
         if (existingActive.isPresent()) {
             AlertEntity activeAlert = existingActive.get();
             activeAlert.setValue(reading.getHeartRate() != null ? reading.getHeartRate() : activeAlert.getValue());
